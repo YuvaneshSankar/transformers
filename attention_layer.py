@@ -12,7 +12,7 @@ d_k = d_model // no_of_head
 
 class calculate_attention_scores(nn.Module): #use this class for all pytorch functionalities for neural networks
     def __init__(self,d_model, no_of_head):
-        super(MultiHeadSelfAttention, self).__init__()
+        super(calculate_attention_scores, self).__init__()
         self.d_model = d_model
         self.no_of_head = no_of_head
         self.d_k = d_model // no_of_head
@@ -36,16 +36,20 @@ class calculate_attention_scores(nn.Module): #use this class for all pytorch fun
         #reshape it like we have (batch_size,seq_len,d_model) this is what we get fromt the embedding layer
         #now what we do is that we split the d_model into no_of_head*d_k then
         #we transpose it to (batch_size,no_of_head,seq_len,d_k) 
-        q=q.view(batch_size,seq_len,no_of_head,d_k).transpose(1,2)
-        k=k.view(batch_size,seq_len,no_of_head,d_k).transpose(1,2)
-        v=v.view(batch_size,seq_len,no_of_head,d_k).transpose(1,2)
+        q=q.view(batch_size,seq_len,self.no_of_head,self.d_k).transpose(1,2)
+        k=k.view(batch_size,seq_len,self.no_of_head,self.d_k).transpose(1,2)
+        v=v.view(batch_size,seq_len,self.no_of_head,self.d_k).transpose(1,2)
 
         #lets calculate the attention score
-        attention_score=torch.matmul(q,k.transpose(-2,-1)/(self.d_k**0.5)) 
-        atn=F.softmax(attention_score,dim=-1)
+        attention_score=torch.matmul(q,k.transpose(-2,-1))/(self.d_k**0.5) 
+        #ktranspose-> (batch_size,no_of_head,seq_len,d_k)
+        #therefore after mul we get -> (batch_size,no_of_head,seq_len,seq_len)
+        atn=F.softmax(attention_score,dim=-1) #aplly to tje last dimension which is seq_len
         context = torch.matmul(attn, v)  
         
         context = context.transpose(1, 2).contiguous().view(batch_size, seq_len, self.d_model)
-        
+        #we here reshape it back to (batch_size, seq_len, d_model) adn store it contigously to be sage
+
+        #apply the linear layer to the output lauer
         output = self.fc(context)
         return output, attn
