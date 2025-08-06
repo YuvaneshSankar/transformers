@@ -1,10 +1,10 @@
-from transformers import BertTokenizer
+# from transformers import BertTokenizer
 import torch
 import torch.nn as nn
 
 
 class EmbeddingWithPositionalEncoding(nn.Module):
-    def __init__(self, vocab_size, embedding_dim, max_len=512):
+    def __init__(self, vocab_size, embedding_dim, max_len):
         super(EmbeddingWithPositionalEncoding, self).__init__()
         self.embedding_dim = embedding_dim
         self.token_embedding = nn.Embedding(vocab_size, embedding_dim)
@@ -27,19 +27,19 @@ class EmbeddingWithPositionalEncoding(nn.Module):
         return embeddings + positional_encoding
 
 
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+# tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-text = "Hi da funda movane."
+# text = "Hi da funda movane."
 
-tokens=tokenizer(text,return_tensors='pt',max_length=10,padding='max_length',truncation=True) #gives the output as pytoch tensor
+# tokens=tokenizer(text,return_tensors='pt',max_length=10,padding='max_length',truncation=True) #gives the output as pytoch tensor
 
-input_ids = tokens['input_ids']
-vocab_size = tokenizer.vocab_size #number of distinct tokens in the total tokens to create the map
-embedding_dim = 512
-#create embedding layer
+# input_ids = tokens['input_ids']
+# vocab_size = tokenizer.vocab_size #number of distinct tokens in the total tokens to create the map
+# embedding_dim = 512
+# #create embedding layer
 
-embedding_layer = EmbeddingWithPosEnc(vocab_size, embedding_dim, max_len=10)
-embedded_output = embedding_layer(input_ids)
+# embedding_layer = EmbeddingWithPosEnc(vocab_size, embedding_dim, max_len=10)
+# embedded_output = embedding_layer(input_ids)
 
 
 
